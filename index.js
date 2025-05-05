@@ -1,11 +1,9 @@
 const { Client, Events, SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const dotenv = require('dotenv');
-const ForbbidenWord = require('./models/ForbiddenWords');
-const express = require('express');
+const Guild = require('./models/Guild');
+const sequelize = require('./utils/database');
+const { where } = require('sequelize');
 dotenv.config();
-const app = express();
-
-app.listen(3001, () => console.log('app listening on port 3001'));
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] });
 
@@ -31,75 +29,114 @@ client.once(Events.ClientReady, (c) => {
     client.application.commands.create(removeFromDict);
 });
 
+client.on('guildCreate', (guild) => {
+    Guild.findOrCreate({ where: { guildId: guild.id } }).catch((e) => {
+        console.log('Unable to write to DB');
+    });
+    console.log(`Joined guild: ${guild.name} (${guild.id})`);
+});
+
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.commandName === 'dict') {
+        dbSync(interaction.guildId);
         let prohibitedWords = [];
-        ForbbidenWord.findAll({ attributes: ['word'] })
-            .then(async (data) => {
-                for (let word of data) {
-                    prohibitedWords.push(word.word.toLowerCase());
-                }
+
+        Guild.findByPk(interaction.guildId)
+            .then((data) => {
+                data.dataValues.data.map((word) => {
+                    prohibitedWords.push(word);
+                });
             })
             .then(() => {
-                const embed = new EmbedBuilder().setColor(0x0099ff).addFields({ name: 'List of prohibited words.', value: `${prohibitedWords.length > 0 ? prohibitedWords.join('\n') : 'No words in the dictionary.'}` });
+                const embed = new EmbedBuilder().setColor(0x0099ff).addFields({
+                    name: 'List of prohibited words.',
+                    value: `${prohibitedWords.length > 0 ? prohibitedWords.join('\n') : 'No words in the dictionary.'}`,
+                });
+
+                interaction.reply({ embeds: [embed] });
+            })
+            .catch((e) => {
+                const embed = new EmbedBuilder().setColor(0x0099ff).addFields({
+                    name: 'List of prohibited words.',
+                    value: 'No words in the dictionary.',
+                });
 
                 interaction.reply({ embeds: [embed] });
             });
     }
 
     if (interaction.commandName === 'dict-add') {
-        await ForbbidenWord.findOrCreate({
-            where: { word: interaction.options.getString('word').toLowerCase() },
-        });
-        interaction.reply('Word has been added to dictionary.');
-    }
+        dbSync(interaction.guildId);
+        let input = interaction.options.getString('word').toLowerCase();
+        let currentData = [];
+        let newData = [];
+        let addWord = true;
 
-    if (interaction.commandName === 'dict-remove') {
-        let prohibitedWords = [];
-        ForbbidenWord.findAll({ attributes: ['word'] })
-            .then(async (data) => {
-                for (let word of data) {
-                    prohibitedWords.push(word.word.toLowerCase());
+        Guild.findByPk(interaction.guildId)
+            .then((data) => {
+                if (data.dataValues.data !== null) {
+                    data.dataValues.data.map((word) => {
+                        if (data.dataValues.data.includes(input)) addWord = false;
+                        currentData.push(word);
+                    });
                 }
             })
             .then(async () => {
-                if (prohibitedWords.length === 0) {
-                    interaction.reply('There are no words to remove.');
-                    return;
-                } else if (!prohibitedWords.includes(interaction.options.getString('word').toLowerCase())) {
-                    interaction.reply('That word does not exist. Use /dict to view the dictionary');
-                    return;
+                if (addWord) {
+                    newData = [...currentData, input];
+                    await Guild.update({ data: newData }, { where: { guildId: interaction.guildId } }).then(() => {
+                        interaction.reply('The word has been added to dictionary.');
+                    });
+                } else {
+                    interaction.reply('The word already exists in the dictionary.');
                 }
+            });
+    }
 
-                await ForbbidenWord.destroy({
-                    where: { word: interaction.options.getString('word').toLowerCase() },
+    if (interaction.commandName === 'dict-remove') {
+        dbSync(interaction.guildId);
+        let input = interaction.options.getString('word').toLowerCase();
+        let newData = [];
+
+        Guild.findByPk(interaction.guildId)
+            .then((data) => {
+                data.dataValues.data.map((word) => {
+                    newData.push(word);
+
+                    newData = newData.filter((word) => {
+                        return word !== input;
+                    });
                 });
-                interaction.reply('Word has been removed from the dictionary.');
+            })
+            .then(async () => {
+                await Guild.update({ data: newData }, { where: { guildId: interaction.guildId } }).then(() => {
+                    interaction.reply('The word has been removed from the dictionary.');
+                });
             });
     }
 });
 
 client.on(Events.MessageCreate, (message) => {
-    if (message.author.bot || message.content.startsWith('/')) return;
+    if (message.author.bot || message.content.startsWith('/dict')) return;
+    let currentData = [];
 
-    let prohibitedWords = [];
-    ForbbidenWord.findAll({ attributes: ['word'] })
-        .then(async (data) => {
-            for (let word of data) {
-                prohibitedWords.push(word.word.toLowerCase());
-            }
+    Guild.findByPk(message.guildId)
+        .then((data) => {
+            data.dataValues.data.map((word) => {
+                currentData.push(word);
+            });
         })
-        .then(() => {
-            prohibitedWords.forEach(async (word) => {
+        .then(async () => {
+            currentData.forEach(async (word) => {
                 if (message.content.toLowerCase().includes(word)) {
                     if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
                         message.delete();
                         return;
                     }
                     await message.member
-                        .timeout(300000, `Used the word(s) ${word}`)
+                        .timeout(30000, `Used the word(s) ${word}`)
                         .then(() => {
-                            message.channel.send(`${message.member} is timed out.`);
+                            message.channel.send(`${message.member} Stop right there criminal scum. You violated the law. You've been timed out.`);
                         })
                         .catch((e) => console.log(e.rawError.message));
                     message.delete();
@@ -107,5 +144,11 @@ client.on(Events.MessageCreate, (message) => {
             });
         });
 });
+
+const dbSync = (guildId) => {
+    Guild.findByPk(guildId).then(() => {
+        Guild.findOrCreate({ where: { guildId: guildId } });
+    });
+};
 
 client.login(process.env.BOT_TOKEN);

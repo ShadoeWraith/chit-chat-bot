@@ -1,4 +1,4 @@
-const forbbidenWord = require('./models/ForbiddenWords');
+const Guild = require('./models/Guild');
 
-forbbidenWord.sync({ alter: true });
-//forbbidenWord.sync({ force: true });
+//Guild.sync({ force: true });
+Guild.sync({ alter: true });
