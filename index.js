@@ -1,8 +1,11 @@
 const { Client, Events, SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const dotenv = require('dotenv');
 const ForbbidenWord = require('./models/ForbiddenWords');
-
+const express = require('express');
 dotenv.config();
+const app = express();
+
+app.listen(3001, () => console.log('app listening on port 3001'));
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] });
 
