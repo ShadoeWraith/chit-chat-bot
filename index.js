@@ -38,7 +38,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 }
             })
             .then(() => {
-                const embed = new EmbedBuilder().setColor(0x0099ff).addFields({ name: 'List of prohibited words.', value: `${prohibitedWords.join('\n')}` });
+                const embed = new EmbedBuilder().setColor(0x0099ff).addFields({ name: 'List of prohibited words.', value: `${prohibitedWords.length > 0 ? prohibitedWords.join('\n') : 'No words in the dictionary.'}` });
 
                 interaction.reply({ embeds: [embed] });
             });
@@ -77,15 +77,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.on(Events.MessageCreate, (message) => {
-    const interactionHandler =
-        (Events.InteractionCreate,
-        (interation) => {
-            if (interaction.commandName === 'dict-remove') return;
-        });
-    if (PermissionFlagsBits.ManageChannels) {
-        message.delete();
-        return;
-    }
+    if (message.author.bot || message.content.startsWith('/')) return;
+
     let prohibitedWords = [];
     ForbbidenWord.findAll({ attributes: ['word'] })
         .then(async (data) => {
@@ -96,6 +89,10 @@ client.on(Events.MessageCreate, (message) => {
         .then(() => {
             prohibitedWords.forEach(async (word) => {
                 if (message.content.toLowerCase().includes(word)) {
+                    if (PermissionFlagsBits.ManageChannels) {
+                        message.delete();
+                        return;
+                    }
                     await message.member
                         .timeout(300000, `Used the word(s) ${word}`)
                         .then(() => {
