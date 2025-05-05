@@ -1,14 +1,37 @@
 const { Client, Events, SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { formatDistance } = require('date-fns');
 const dotenv = require('dotenv');
 const Guild = require('./models/Guild');
-const sequelize = require('./utils/database');
-const { where } = require('sequelize');
+const Bot = require('./models/Bot');
 dotenv.config();
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] });
 
+let botId = '';
+
 client.once(Events.ClientReady, (c) => {
+    const date = new Date();
     console.log(`Logged in as ${c.user.username}.`);
+
+    botId = c.user.id;
+
+    Bot.findOrCreate({ where: { botId: c.user.id } })
+        .catch((e) => {
+            console.log('Unable to write to DB - BOT');
+        })
+        .then(() => {
+            Bot.findByPk(c.user.id)
+                .then(async (data) => {
+                    await Bot.update({ data: { uptime: { date } } }, { where: { botId: c.user.id } }).catch((e) => {
+                        console.log(e);
+                    });
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+        });
+
+    const uptime = new SlashCommandBuilder().setName('uptime').setDescription('Displays the uptime of the bot.');
 
     const viewDict = new SlashCommandBuilder().setName('dict').setDescription('Displays all the forbidden words in the dictionary.').setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
 
@@ -24,6 +47,7 @@ client.once(Events.ClientReady, (c) => {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .addStringOption((option) => option.setName('word').setDescription('Remove the word from the dictionary.').setRequired(true));
 
+    client.application.commands.create(uptime);
     client.application.commands.create(viewDict);
     client.application.commands.create(addToDict);
     client.application.commands.create(removeFromDict);
@@ -37,15 +61,34 @@ client.on('guildCreate', (guild) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
+    if (interaction.commandName === 'uptime') {
+        dbSync(interaction.guildId);
+        let currentDate = new Date();
+        Bot.findByPk(botId)
+            .then(async (data) => {
+                let uptime = data.dataValues.data?.uptime;
+                const timeAgo = formatDistance(uptime.date, currentDate, { addSuffix: true });
+
+                const embed = new EmbedBuilder().setColor('#0099ff').setTitle('Uptime').setDescription(`:clock1: ${timeAgo}`).setTimestamp();
+                interaction.reply({ embeds: [embed] });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }
+
     if (interaction.commandName === 'dict') {
         dbSync(interaction.guildId);
         let prohibitedWords = [];
 
         Guild.findByPk(interaction.guildId)
             .then((data) => {
-                data.dataValues.data.map((word) => {
-                    prohibitedWords.push(word);
-                });
+                let values = data.dataValues.data?.forbiddenWords;
+                if (values !== null && values !== undefined) {
+                    values.map((word) => {
+                        prohibitedWords.push(word);
+                    });
+                }
             })
             .then(() => {
                 const embed = new EmbedBuilder().setColor(0x0099ff).addFields({
@@ -74,9 +117,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
         Guild.findByPk(interaction.guildId)
             .then((data) => {
-                if (data.dataValues.data !== null) {
-                    data.dataValues.data.map((word) => {
-                        if (data.dataValues.data.includes(input)) addWord = false;
+                let values = data.dataValues.data?.forbiddenWords;
+                if (values !== null && values !== undefined) {
+                    values.map((word) => {
+                        if (values.includes(input)) addWord = false;
                         currentData.push(word);
                     });
                 }
@@ -84,7 +128,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
             .then(async () => {
                 if (addWord) {
                     newData = [...currentData, input];
-                    await Guild.update({ data: newData }, { where: { guildId: interaction.guildId } }).then(() => {
+                    await Guild.update({ data: { forbiddenWords: newData } }, { where: { guildId: interaction.guildId } }).then(() => {
                         interaction.reply('The word has been added to dictionary.');
                     });
                 } else {
@@ -98,33 +142,50 @@ client.on(Events.InteractionCreate, async (interaction) => {
         let input = interaction.options.getString('word').toLowerCase();
         let newData = [];
 
-        Guild.findByPk(interaction.guildId)
-            .then((data) => {
-                data.dataValues.data.map((word) => {
+        Guild.findByPk(interaction.guildId).then(async (data) => {
+            let removeWord = true;
+            let values = data.dataValues.data?.forbiddenWords;
+            if (values !== null && values !== undefined) {
+                values.map((word) => {
                     newData.push(word);
 
                     newData = newData.filter((word) => {
                         return word !== input;
                     });
+
+                    if (values.includes(input)) {
+                        return;
+                    } else {
+                        removeWord = false;
+                    }
                 });
-            })
-            .then(async () => {
-                await Guild.update({ data: newData }, { where: { guildId: interaction.guildId } }).then(() => {
-                    interaction.reply('The word has been removed from the dictionary.');
-                });
-            });
+                if (removeWord) {
+                    await Guild.update({ data: newData }, { where: { guildId: interaction.guildId } }).then(() => {
+                        interaction.reply('The word has been removed from the dictionary.');
+                    });
+                } else {
+                    interaction.reply('The word you want to remove does not exist in the dictionary.');
+                }
+            } else {
+                interaction.reply('No words in the dictionary to remove.');
+                return;
+            }
+        });
     }
 });
 
 client.on(Events.MessageCreate, (message) => {
-    if (message.author.bot || message.content.startsWith('/dict')) return;
+    if (message.author.bot || message.content.startsWith('/dict') || message.content.startsWith('/uptime')) return;
     let currentData = [];
 
     Guild.findByPk(message.guildId)
         .then((data) => {
-            data.dataValues.data.map((word) => {
-                currentData.push(word);
-            });
+            let values = data.dataValues.data?.forbiddenWords;
+            if (values !== null && values !== undefined) {
+                values.map((word) => {
+                    currentData.push(word);
+                });
+            }
         })
         .then(async () => {
             currentData.forEach(async (word) => {
@@ -134,7 +195,7 @@ client.on(Events.MessageCreate, (message) => {
                         return;
                     }
                     await message.member
-                        .timeout(30000, `Used the word(s) ${word}`)
+                        .timeout(300000, `Used the word(s) ${word}`)
                         .then(() => {
                             message.channel.send(`${message.member} Stop right there criminal scum. You violated the law. You've been timed out.`);
                         })
