@@ -89,7 +89,7 @@ client.on(Events.MessageCreate, (message) => {
         .then(() => {
             prohibitedWords.forEach(async (word) => {
                 if (message.content.toLowerCase().includes(word)) {
-                    if (PermissionFlagsBits.ManageChannels) {
+                    if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
                         message.delete();
                         return;
                     }
