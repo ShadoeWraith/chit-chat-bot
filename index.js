@@ -1,5 +1,5 @@
 const { Client, Events, SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
-const { formatDistance } = require('date-fns');
+const { formatDistance, formatRelative, intervalToDuration, differenceInDays } = require('date-fns');
 const dotenv = require('dotenv');
 const Guild = require('./models/Guild');
 const Bot = require('./models/Bot');
@@ -67,9 +67,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
         Bot.findByPk(botId)
             .then(async (data) => {
                 let uptime = data.dataValues.data?.uptime;
-                const timeAgo = formatDistance(uptime.date, currentDate, { addSuffix: true });
+                let { hours, minutes, seconds } = intervalToDuration({ start: uptime.date, end: currentDate });
+                let days = differenceInDays(currentDate, uptime.date);
 
-                const embed = new EmbedBuilder().setColor('#0099ff').setTitle('Uptime').setDescription(`:clock1: ${timeAgo}`).setTimestamp();
+                if (days === undefined) days = '0';
+                if (hours === undefined) hours = '0';
+                if (minutes === undefined) minutes = '0';
+                if (seconds === undefined) seconds = '0';
+
+                const embed = new EmbedBuilder().setColor('#8855ff').setTitle('Uptime').setDescription(`:clock1: ${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`).setTimestamp();
                 interaction.reply({ embeds: [embed] });
             })
             .catch((e) => {
