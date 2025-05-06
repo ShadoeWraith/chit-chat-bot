@@ -30,7 +30,7 @@ export async function execute(interaction) {
         else updatedData.roles.push({ id: input.id, label: input.name });
 
         await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(async () => {
-            await interaction.reply({ content: `**${input}** has been added to dictionary.`, flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: `**${input}** has been added to the list.`, flags: MessageFlags.Ephemeral });
         });
     } else {
         await interaction.reply({ content: `${input} already exists in the list.`, flags: MessageFlags.Ephemeral });

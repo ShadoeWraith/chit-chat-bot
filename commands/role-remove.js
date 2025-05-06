@@ -15,19 +15,18 @@ export async function execute(interaction) {
     let newData = [];
 
     const record = await Guild.findByPk(interaction.guildId);
-    try {
-        if (record.data.roles) {
-            if (record.data.roles.includes(input.id)) removeRole = false;
-            record.data.roles.map((role) => {
-                newData.push(role);
 
-                newData = newData.filter((role) => {
-                    return role.id !== input.id;
-                });
+    if (record.data.roles.length !== 0) {
+        if (record.data.roles.includes(input.id)) removeRole = false;
+        record.data.roles.map((role) => {
+            newData.push(role);
 
-                if (newData.includes(input)) removeRole = false;
+            newData = newData.filter((role) => {
+                return role.id !== input.id;
             });
-        }
+
+            if (newData.includes(input)) removeRole = false;
+        });
 
         if (removeRole) {
             let updatedData = record.data;
@@ -36,12 +35,11 @@ export async function execute(interaction) {
             else updatedData.roles = newData;
 
             await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(() => {
-                interaction.reply({ content: `**${input}** has been removed from the dictionary.`, flags: MessageFlags.Ephemeral });
+                interaction.reply({ content: `**${input}** has been removed from the list.`, flags: MessageFlags.Ephemeral });
             });
         } else {
-            interaction.reply({ content: `**${input}** does not exist in the dictionary.`, flags: MessageFlags.Ephemeral });
+            interaction.reply({ content: `**${input}** does not exist in the list.`, flags: MessageFlags.Ephemeral });
         }
-    } catch (error) {
-        interaction.reply({ content: 'No words in the dictionary to remove.', flags: MessageFlags.Ephemeral });
     }
+    interaction.reply({ content: 'No roles in the list.', flags: MessageFlags.Ephemeral });
 }
