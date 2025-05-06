@@ -40,6 +40,7 @@ export async function execute(interaction) {
         } else {
             interaction.reply({ content: `**${input}** does not exist in the list.`, flags: MessageFlags.Ephemeral });
         }
+    } else {
+        interaction.reply({ content: 'No roles in the list.', flags: MessageFlags.Ephemeral });
     }
-    interaction.reply({ content: 'No roles in the list.', flags: MessageFlags.Ephemeral });
 }
