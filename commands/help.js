@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 import { dbSync } from '../utils/dbsync.js';
 
 export const data = new SlashCommandBuilder().setName('help').setDescription('Displays a list of commands.');
@@ -45,5 +45,5 @@ export async function execute(interaction) {
             }
         );
 
-    interaction.reply({ embeds: [embed] });
+    interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 }
