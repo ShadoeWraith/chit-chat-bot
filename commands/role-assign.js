@@ -15,7 +15,7 @@ export async function execute(interaction) {
         record.data.roles.forEach((role) => {
             roleOptions.push(new StringSelectMenuOptionBuilder().setLabel(role.label).setValue(role.id));
 
-            roleList.push(`<@&${role.id}>`);
+            roleList.push(`* <@&${role.id}>`);
         });
 
         const roleSelectMenu = new StringSelectMenuBuilder().setCustomId('roleSelectMenu').setPlaceholder('Select a role').addOptions(roleOptions);
