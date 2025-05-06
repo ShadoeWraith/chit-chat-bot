@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../utils/database');
+import Sequelize from 'sequelize';
+import { sequelize } from '../utils/database.js';
 
-const Bot = sequelize.define('Bot', {
+export const Bot = sequelize.define('Bot', {
     botId: {
         type: Sequelize.STRING,
         primaryKey: true,
@@ -10,5 +10,3 @@ const Bot = sequelize.define('Bot', {
         type: Sequelize.JSON,
     },
 });
-
-module.exports = Bot;

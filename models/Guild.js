@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../utils/database');
+import Sequelize from 'sequelize';
+import { sequelize } from '../utils/database.js';
 
-const Guild = sequelize.define('Guild', {
+export const Guild = sequelize.define('Guild', {
     guildId: {
         type: Sequelize.STRING,
         primaryKey: true,
@@ -10,5 +10,3 @@ const Guild = sequelize.define('Guild', {
         type: Sequelize.JSON,
     },
 });
-
-module.exports = Guild;

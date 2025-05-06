@@ -1,5 +1,5 @@
-const Bot = require('./models/Bot');
-const Guild = require('./models/Guild');
+import { Bot } from './models/Bot.js';
+import { Guild } from './models/Guild.js';
 
 //Guild.sync({ force: true });
 Guild.sync({ alter: true });
