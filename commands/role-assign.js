@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
