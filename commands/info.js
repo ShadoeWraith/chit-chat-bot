@@ -20,8 +20,6 @@ export async function execute(interaction) {
         if (role.name !== '@everyone') userRoles.push(`<@&${role.id}>`);
     });
 
-    console.log(userRoles);
-
     const createdAt = format(member.user.createdAt, 'MM/dd/yyyy');
     const joinedAt = format(member.joinedAt, 'MM/dd/yyyy');
 
