@@ -1,0 +1,46 @@
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { dbSync } from '../utils/dbsync.js';
+
+export const data = new SlashCommandBuilder().setName('help').setDescription('Displays a list of commands.');
+
+export async function execute(interaction) {
+    dbSync(interaction.guildId);
+
+    let publicCommands = [
+        { name: '/help', description: 'Displays a list of commands.' },
+        { name: '/uptime', description: 'Displays the uptime since the bot came online.' },
+    ];
+    let adminCommands = [
+        { name: '/dict', description: 'Displays dictionary of prohibbited words.' },
+        { name: '/dict-add', description: 'Adds a word to the dictionary.' },
+        { name: '/dict-remove', description: 'Removes a word from the dictionary.' },
+    ];
+
+    let publicList = [];
+    let adminList = [];
+
+    publicCommands.map((command) => {
+        publicList.push(`**${command.name}** - ${command.description}`);
+    });
+
+    adminCommands.map((command) => {
+        adminList.push(`**${command.name}** - ${command.description}`);
+    });
+
+    const embed = new EmbedBuilder()
+        .setColor(0x00aa00)
+        .setTitle('Bot Commands')
+        .setDescription('Commands available for public and admins')
+        .addFields(
+            {
+                name: 'Public Commands',
+                value: publicList.join('\n'),
+            },
+            {
+                name: 'Admin Commands',
+                value: adminList.join('\n'),
+            }
+        );
+
+    interaction.reply({ embeds: [embed] });
+}
