@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 import { dbSync } from '../utils/dbsync.js';
 import { intervalToDuration, differenceInDays } from 'date-fns';
 import { Bot } from '../models/Bot.js';
@@ -20,7 +20,7 @@ export async function execute(interaction) {
             if (seconds === undefined) seconds = '0';
 
             const embed = new EmbedBuilder().setColor('#8855ff').setTitle('Uptime').setDescription(`:clock1: ${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`).setTimestamp();
-            interaction.reply({ embeds: [embed] });
+            interaction.reply({ embeds: [embed], flag: MessageFlags.Ephemeral });
         })
         .catch((e) => {
             console.log(e);
