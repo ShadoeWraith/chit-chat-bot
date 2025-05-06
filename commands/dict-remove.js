@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
 import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
@@ -32,13 +32,13 @@ export async function execute(interaction) {
             });
             if (removeWord) {
                 await Guild.update({ data: newData }, { where: { guildId: interaction.guildId } }).then(() => {
-                    interaction.reply('The word has been removed from the dictionary.');
+                    interaction.reply({ content: `**${input}** has been removed from the dictionary.`, flags: MessageFlags.Ephemeral });
                 });
             } else {
-                interaction.reply('The word you want to remove does not exist in the dictionary.');
+                interaction.reply({ content: `**${input}** does not exist in the dictionary.`, flags: MessageFlags.Ephemeral });
             }
         } else {
-            interaction.reply('No words in the dictionary to remove.');
+            interaction.reply({ content: 'No words in the dictionary to remove.', flags: MessageFlags.Ephemeral });
             return;
         }
     });

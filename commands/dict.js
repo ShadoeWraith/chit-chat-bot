@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, MessageFlags } from 'discord.js';
 import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
@@ -23,7 +23,7 @@ export async function execute(interaction) {
                 value: `${prohibitedWords.length > 0 ? prohibitedWords.join('\n') : 'No words in the dictionary.'}`,
             });
 
-            interaction.reply({ embeds: [embed] });
+            interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         })
         .catch((e) => {
             const embed = new EmbedBuilder().setColor(0x0099ff).addFields({
@@ -31,6 +31,6 @@ export async function execute(interaction) {
                 value: 'No words in the dictionary.',
             });
 
-            interaction.reply({ embeds: [embed] });
+            interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         });
 }

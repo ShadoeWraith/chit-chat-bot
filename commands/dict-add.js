@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
 import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
@@ -29,10 +29,10 @@ export async function execute(interaction) {
             if (addWord) {
                 newData = [...currentData, input];
                 await Guild.update({ data: { forbiddenWords: newData } }, { where: { guildId: interaction.guildId } }).then(() => {
-                    interaction.reply('The word has been added to dictionary.');
+                    interaction.reply({ content: `**${input}** has been added to dictionary.`, flags: MessageFlags.Ephemeral });
                 });
             } else {
-                interaction.reply('The word already exists in the dictionary.');
+                interaction.reply({ content: `**${input}** already exists in the dictionary.`, flags: MessageFlags.Ephemeral });
             }
         });
 }
