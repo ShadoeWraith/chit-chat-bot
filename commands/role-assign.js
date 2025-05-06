@@ -11,24 +11,31 @@ export async function execute(interaction) {
     const roleOptions = [];
     const roleList = [];
 
-    record.data.roles.forEach((role) => {
-        roleOptions.push(new StringSelectMenuOptionBuilder().setLabel(role.label).setValue(role.id));
+    try {
+        record.data.roles.forEach((role) => {
+            roleOptions.push(new StringSelectMenuOptionBuilder().setLabel(role.label).setValue(role.id));
 
-        roleList.push(`<@&${role.id}>`);
-    });
+            roleList.push(`<@&${role.id}>`);
+        });
 
-    const roleSelectMenu = new StringSelectMenuBuilder().setCustomId('roleSelectMenu').setPlaceholder('Select a role').addOptions(roleOptions);
+        const roleSelectMenu = new StringSelectMenuBuilder().setCustomId('roleSelectMenu').setPlaceholder('Select a role').addOptions(roleOptions);
 
-    const row = new ActionRowBuilder().addComponents(roleSelectMenu);
+        const row = new ActionRowBuilder().addComponents(roleSelectMenu);
 
-    const embed = new EmbedBuilder()
-        .setTitle('Role Color Select')
-        .setDescription('Toggle a role that changes the color of your name.')
-        .addFields({ name: 'Available Roles', value: roleList.join('\n') });
+        const embed = new EmbedBuilder()
+            .setTitle('Role Color Select')
+            .setDescription('Toggle a role that changes the color of your name.')
+            .addFields({ name: 'Available Roles', value: roleList.join('\n') });
 
-    await interaction.reply({
-        embeds: [embed],
-        components: [row],
-        flags: MessageFlags.Ephemeral,
-    });
+        await interaction.reply({
+            embeds: [embed],
+            components: [row],
+            flags: MessageFlags.Ephemeral,
+        });
+    } catch (error) {
+        await interaction.reply({
+            content: 'Add roles to display role selection menu.',
+            flags: MessageFlags.Ephemeral,
+        });
+    }
 }
