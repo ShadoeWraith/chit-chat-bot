@@ -11,7 +11,7 @@ export async function execute(interaction) {
         { name: '/uptime', description: 'Displays the uptime since the bot came online.' },
     ];
     let adminCommands = [
-        { name: '/dict', description: 'Displays dictionary of prohibbited words.' },
+        { name: '/dict', description: 'Displays dictionary of prohibited words.' },
         { name: '/dict-add', description: 'Adds a word to the dictionary.' },
         { name: '/dict-remove', description: 'Removes a word from the dictionary.' },
     ];
