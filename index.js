@@ -57,10 +57,8 @@ client.on('interactionCreate', async (interaction) => {
                 interaction.member.roles.remove(interaction.values[0]);
                 interaction.reply({ content: `<@&${interaction.values[0]}> has been removed from your user.`, flags: MessageFlags.Ephemeral });
             } else {
-                interaction.member.roles.set([]).then(() => {
-                    interaction.member.roles.add(interaction.values[0]);
-                    interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
-                });
+                interaction.member.roles.add(interaction.values[0]);
+                interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
             }
         } catch (error) {
             interaction.reply({ content: "Unable to change anyone's color with admin privileges.", flags: MessageFlags.Ephemeral });
