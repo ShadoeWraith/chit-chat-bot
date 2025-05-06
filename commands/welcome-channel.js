@@ -25,7 +25,7 @@ export async function execute(interaction) {
 
     const embed = new EmbedBuilder()
         .setTitle('Welcome Channel Information')
-        .setDescription('Displays the channel and the message you chose for this server.')
+        .setDescription('Displays the welcome channel, role, and message you chose for this server.')
         .addFields({ name: 'Selected Channel', value: `<#${channel.id}>` })
         .addFields({ name: 'Memeber Role', value: role ? `<@&${role.id}>` : 'No Role Selected' })
         .addFields({ name: 'Welcome Message', value: message });
