@@ -11,28 +11,28 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction) {
     dbSync(interaction.guildId);
     let input = interaction.options.getString('word').toLowerCase();
-    let currentData = [];
-    let newData = [];
     let addWord = true;
 
-    Guild.findByPk(interaction.guildId)
-        .then((data) => {
-            let values = data.dataValues.data?.forbiddenWords;
-            if (values !== null && values !== undefined) {
-                values.map((word) => {
-                    if (values.includes(input)) addWord = false;
-                    currentData.push(word);
-                });
-            }
-        })
-        .then(async () => {
-            if (addWord) {
-                newData = [...currentData, input];
-                await Guild.update({ data: { forbiddenWords: newData } }, { where: { guildId: interaction.guildId } }).then(() => {
-                    interaction.reply({ content: `**${input}** has been added to dictionary.`, flags: MessageFlags.Ephemeral });
-                });
-            } else {
-                interaction.reply({ content: `**${input}** already exists in the dictionary.`, flags: MessageFlags.Ephemeral });
+    const record = await Guild.findByPk(interaction.guildId);
+
+    if (record.data.forbiddenWords) {
+        record.data.forbiddenWords.map((word) => {
+            if (word === input) {
+                addRole = false;
             }
         });
+    }
+
+    if (addWord) {
+        let updatedData = record.data;
+
+        if (updatedData.forbiddenWords === undefined) updatedData = { ...updatedData, forbiddenWords: [input] };
+        else updatedData.forbiddenWords.push(input);
+
+        await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(() => {
+            interaction.reply({ content: `**${input}** has been added to dictionary.`, flags: MessageFlags.Ephemeral });
+        });
+    } else {
+        interaction.reply({ content: `**${input}** already exists in the dictionary.`, flags: MessageFlags.Ephemeral });
+    }
 }

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
-import { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits, MessageFlags } from 'discord.js';
 import dotenv from 'dotenv';
 
 import { Bot } from './models/Bot.js';
@@ -49,8 +49,24 @@ client.once(Events.ClientReady, (c) => {
         });
 });
 
-// Handles all the slash commands
+// Handles all commands
 client.on('interactionCreate', async (interaction) => {
+    if (interaction.isAnySelectMenu()) {
+        try {
+            if (interaction.member.roles.cache.has(interaction.values[0])) {
+                interaction.member.roles.remove(interaction.values[0]);
+                interaction.reply({ content: `<@&${interaction.values[0]}> has been removed from your user.`, flags: MessageFlags.Ephemeral });
+            } else {
+                interaction.member.roles.set([]).then(() => {
+                    interaction.member.roles.add(interaction.values[0]);
+                    interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
+                });
+            }
+        } catch (error) {
+            interaction.reply({ content: "Unable to change anyone's color with admin privileges.", flags: MessageFlags.Ephemeral });
+        }
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     const command = commands.get(interaction.commandName);
@@ -61,7 +77,7 @@ client.on('interactionCreate', async (interaction) => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
     }
 });
 

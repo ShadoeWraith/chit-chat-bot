@@ -3,39 +3,37 @@ import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
 export const data = new SlashCommandBuilder()
-    .setName('dict-remove')
-    .setDescription('Removes a word from the forbidden words dictionary.')
+    .setName('role-remove')
+    .setDescription('Removes a role from list for auto assign roles.')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-    .addStringOption((option) => option.setName('word').setDescription('Remove the word from the dictionary.').setRequired(true));
+    .addRoleOption((option) => option.setName('role').setDescription('The role to remove from the list.').setRequired(true));
 
 export async function execute(interaction) {
     dbSync(interaction.guildId);
-
-    let input = interaction.options.getString('word').toLowerCase();
-    let removeWord = true;
+    let input = interaction.options.getRole('role');
+    let removeRole = true;
     let newData = [];
 
     const record = await Guild.findByPk(interaction.guildId);
-
     try {
-        if (record.data.forbiddenWords) {
-            if (!record.data.forbiddenWords.includes(input)) removeWord = false;
-            record.data.forbiddenWords.map((word) => {
-                newData.push(word);
+        if (record.data.roles) {
+            if (record.data.roles.includes(input.id)) removeRole = false;
+            record.data.roles.map((role) => {
+                newData.push(role);
 
-                newData = newData.filter((word) => {
-                    return word !== input;
+                newData = newData.filter((role) => {
+                    return role.id !== input.id;
                 });
 
-                if (newData.includes(input)) removeWord = false;
+                if (newData.includes(input)) removeRole = false;
             });
         }
 
-        if (removeWord) {
+        if (removeRole) {
             let updatedData = record.data;
 
-            if (updatedData.forbiddenWords === undefined) updatedData = { ...updatedData, forbiddenWords: [...newData] };
-            else updatedData.forbiddenWords = newData;
+            if (updatedData.roles === undefined) updatedData = { ...updatedData, roles: [...newData] };
+            else updatedData.roles = newData;
 
             await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(() => {
                 interaction.reply({ content: `**${input}** has been removed from the dictionary.`, flags: MessageFlags.Ephemeral });
