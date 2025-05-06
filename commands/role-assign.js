@@ -2,7 +2,7 @@ import { SlashCommandBuilder, PermissionFlagsBits, StringSelectMenuBuilder, Stri
 import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
-export const data = new SlashCommandBuilder().setName('role-assign').setDescription('Displays the assign role menu.').setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
+export const data = new SlashCommandBuilder().setName('role-assign').setDescription('Displays the assign role menu.');
 
 export async function execute(interaction) {
     dbSync(interaction.guildId);

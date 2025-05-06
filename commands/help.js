@@ -9,11 +9,14 @@ export async function execute(interaction) {
     let publicCommands = [
         { name: '/help', description: 'Displays a list of commands.' },
         { name: '/uptime', description: 'Displays the uptime since the bot came online.' },
+        { name: '/role-assign', description: 'Displays a role assign selection.' },
     ];
     let adminCommands = [
         { name: '/dict', description: 'Displays dictionary of prohibited words.' },
         { name: '/dict-add', description: 'Adds a word to the dictionary.' },
         { name: '/dict-remove', description: 'Removes a word from the dictionary.' },
+        { name: '/role-add', description: 'Adds a role for role assign.' },
+        { name: '/role-remove', description: 'Removes a role from role assign.' },
     ];
 
     let publicList = [];
