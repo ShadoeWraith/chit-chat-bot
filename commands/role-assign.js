@@ -1,11 +1,9 @@
 import { SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
 export const data = new SlashCommandBuilder().setName('role-assign').setDescription('Displays the assign role menu.');
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
     const record = await Guild.findByPk(interaction.guildId);
 
     const roleOptions = [];

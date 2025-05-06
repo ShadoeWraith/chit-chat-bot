@@ -1,5 +1,4 @@
 import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
 export const data = new SlashCommandBuilder()
@@ -9,8 +8,6 @@ export const data = new SlashCommandBuilder()
     .addStringOption((option) => option.setName('word').setDescription('Remove the word from the dictionary.').setRequired(true));
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
-
     let input = interaction.options.getString('word').toLowerCase();
     let removeWord = true;
     let newData = [];

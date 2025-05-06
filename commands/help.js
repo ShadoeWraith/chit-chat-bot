@@ -1,11 +1,8 @@
 import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 
 export const data = new SlashCommandBuilder().setName('help').setDescription('Displays a list of commands.');
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
-
     let publicCommands = [
         { name: '/help', description: 'Displays a list of commands.' },
         { name: '/uptime', description: 'Displays the uptime since the bot came online.' },

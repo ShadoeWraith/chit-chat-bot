@@ -1,12 +1,10 @@
 import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 import { intervalToDuration, differenceInDays } from 'date-fns';
 import { Bot } from '../models/Bot.js';
 
 export const data = new SlashCommandBuilder().setName('uptime').setDescription('Displays the uptime of the bot.');
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
     let currentDate = new Date();
     Bot.findByPk(interaction.client.user.id)
         .then(async (data) => {

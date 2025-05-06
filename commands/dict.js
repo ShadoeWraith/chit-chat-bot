@@ -1,11 +1,9 @@
 import { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
 export const data = new SlashCommandBuilder().setName('dict').setDescription('Displays all the forbidden words in the dictionary.').setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
     let prohibitedWords = [];
 
     Guild.findByPk(interaction.guildId)

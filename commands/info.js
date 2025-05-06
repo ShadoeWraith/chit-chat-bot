@@ -1,5 +1,4 @@
 import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 import { format } from 'date-fns';
 
 export const data = new SlashCommandBuilder()
@@ -8,8 +7,6 @@ export const data = new SlashCommandBuilder()
     .addUserOption((option) => option.setName('user').setDescription('The user you would like to view').setRequired(true));
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
-
     const targetUser = interaction.options.getUser('user');
 
     const guild = interaction.guild;

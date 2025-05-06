@@ -1,5 +1,4 @@
 import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from 'discord.js';
-import { dbSync } from '../utils/dbsync.js';
 import { Guild } from '../models/Guild.js';
 
 export const data = new SlashCommandBuilder()
@@ -9,7 +8,6 @@ export const data = new SlashCommandBuilder()
     .addRoleOption((option) => option.setName('role').setDescription('The role to add to the list.').setRequired(true));
 
 export async function execute(interaction) {
-    dbSync(interaction.guildId);
     let input = interaction.options.getRole('role');
     let addRole = true;
 

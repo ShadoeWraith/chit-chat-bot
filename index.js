@@ -30,53 +30,65 @@ for (const file of commandFiles) {
 
 client.once(Events.ClientReady, (c) => {
     const date = new Date();
-    console.log(`Logged in as ${c.user.username}.`);
 
-    Bot.findOrCreate({ where: { botId: c.user.id } })
-        .catch((e) => {
-            console.log('Unable to write to DB - BOT');
-        })
-        .then(() => {
-            Bot.findByPk(c.user.id)
-                .then(async (data) => {
-                    await Bot.update({ data: { uptime: { date } } }, { where: { botId: c.user.id } }).catch((e) => {
+    client.guilds.cache.forEach((guild) => {
+        Guild.findOrCreate({ where: { guildId: guild.id } });
+    });
+
+    setTimeout(() => {
+        Bot.findOrCreate({ where: { botId: c.user.id } })
+            .catch((e) => {
+                console.log('Unable to write to DB - BOT');
+            })
+            .then(() => {
+                Bot.findByPk(c.user.id)
+                    .then(async (data) => {
+                        await Bot.update({ data: { uptime: { date } } }, { where: { botId: c.user.id } }).catch((e) => {
+                            console.log(e);
+                        });
+                    })
+                    .catch((e) => {
                         console.log(e);
                     });
-                })
-                .catch((e) => {
-                    console.log(e);
-                });
-        });
+            });
+        console.log(`Logged in as ${c.user.username}.`);
+    }, 1000);
+});
+
+client.on('guildCreate', (guild) => {
+    Guild.findOrCreate({ where: { guildId: guild.id } });
 });
 
 // Handles all commands
-client.on('interactionCreate', async (interaction) => {
-    if (interaction.isAnySelectMenu()) {
-        try {
-            if (interaction.member.roles.cache.has(interaction.values[0])) {
-                interaction.member.roles.remove(interaction.values[0]);
-                interaction.reply({ content: `<@&${interaction.values[0]}> has been removed from your user.`, flags: MessageFlags.Ephemeral });
-            } else {
-                interaction.member.roles.add(interaction.values[0]);
-                interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
+client.on('interactionCreate', (interaction) => {
+    Guild.findOrCreate({ where: { guildId: interaction.guildId } }).then(async () => {
+        if (interaction.isAnySelectMenu()) {
+            try {
+                if (interaction.member.roles.cache.has(interaction.values[0])) {
+                    interaction.member.roles.remove(interaction.values[0]);
+                    interaction.reply({ content: `<@&${interaction.values[0]}> has been removed from your user.`, flags: MessageFlags.Ephemeral });
+                } else {
+                    interaction.member.roles.add(interaction.values[0]);
+                    interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
+                }
+            } catch (error) {
+                interaction.reply({ content: "Unable to change anyone's color with admin privileges.", flags: MessageFlags.Ephemeral });
             }
-        } catch (error) {
-            interaction.reply({ content: "Unable to change anyone's color with admin privileges.", flags: MessageFlags.Ephemeral });
         }
-    }
 
-    if (!interaction.isChatInputCommand()) return;
+        if (!interaction.isChatInputCommand()) return;
 
-    const command = commands.get(interaction.commandName);
+        const command = commands.get(interaction.commandName);
 
-    if (!command) return;
+        if (!command) return;
 
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
-    }
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+        }
+    });
 });
 
 // Times users out if they use prohibbited words
@@ -110,6 +122,29 @@ client.on(Events.MessageCreate, (message) => {
                 }
             });
         });
+});
+
+client.on('guildMemberAdd', async (member) => {
+    try {
+        const record = await Guild.findByPk(member.guild.id);
+        let selectedChannel = {};
+
+        if (record.data?.channel) selectedChannel = record.data.channel;
+
+        const welcomeChannel = member.guild.channels.cache.find((channel) => channel.id === selectedChannel.id); // Replace 'general' with the name of your welcome channel
+
+        welcomeChannel.send(`<@${member.user.id}> ${selectedChannel.message}`);
+
+        const role = member.guild.roles.cache.get(selectedChannel.roleId);
+
+        if (role) {
+            member.roles.add(role).catch(console.error);
+        } else {
+            console.error(`Unable to give the role.`);
+        }
+    } catch (error) {
+        console.log('Welcome channel not setup');
+    }
 });
 
 client.login(process.env.BOT_TOKEN);
