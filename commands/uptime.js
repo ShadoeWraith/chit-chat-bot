@@ -20,7 +20,7 @@ export async function execute(interaction) {
             if (seconds === undefined) seconds = '0';
 
             const embed = new EmbedBuilder().setColor('#8855ff').setTitle('Uptime').setDescription(`:clock1: ${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`).setTimestamp();
-            interaction.reply({ embeds: [embed], flag: MessageFlags.Ephemeral });
+            interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         })
         .catch((e) => {
             console.log(e);
