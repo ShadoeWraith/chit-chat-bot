@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
-import { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits, MessageFlags } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits, PermissionFlagsBits, MessageFlags, ActivityType } from 'discord.js';
 import dotenv from 'dotenv';
 
 import { Bot } from './models/Bot.js';
@@ -52,6 +52,7 @@ client.once(Events.ClientReady, (c) => {
                     });
             });
         console.log(`Logged in as ${c.user.username}.`);
+        client.user.setActivity('Commands - /help', { type: ActivityType.Playing });
     }, 1000);
 });
 
