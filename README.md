@@ -15,16 +15,16 @@ A bot specifically build for personal friend's server.
 * Create an application
 * Go to OAuth2 tab
   - Scroll down to Oauth2 URL Generator and tick `bot` and `application.commands`.
-  - ![image](https://github.com/user-attachments/assets/ec428883-ad34-4fcb-8481-d9bce29327be)
+  ![image](https://github.com/user-attachments/assets/ec428883-ad34-4fcb-8481-d9bce29327be)
   - Scroll down to bot permissions and tick `administrator`.
-  - ![image](https://github.com/user-attachments/assets/51ec6d97-a128-47ce-b14f-8f2854580cf4)
+  ![image](https://github.com/user-attachments/assets/51ec6d97-a128-47ce-b14f-8f2854580cf4)
   - Then scroll down and copy the generated URL and put it in your URL bar in your chosen browser.
   - Choose the server you want the bot to join.
 * Go to Bot tab
   - Scroll down and enable all three of the privledged gateway intents
-  - ![image](https://github.com/user-attachments/assets/6e29c0e3-d7ae-4b07-b26e-24b15b63c592)
+  ![image](https://github.com/user-attachments/assets/6e29c0e3-d7ae-4b07-b26e-24b15b63c592)
   - Scroll down some more and tick `administrator`
-  - ![image](https://github.com/user-attachments/assets/5c781a5e-e541-4c4c-b32f-67059295fd17)
+  ![image](https://github.com/user-attachments/assets/5c781a5e-e541-4c4c-b32f-67059295fd17)
   - After that scroll up and reset the bot token and copy the bot token keep it on the side be sure to not lose it.
 * Pull the code
   - cd into the folder
