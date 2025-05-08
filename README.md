@@ -28,7 +28,7 @@ A bot specifically build for personal friend's server.
   - After that scroll up and reset the bot token and copy the bot token keep it on the side be sure to not lose it.
 * Pull the code
   - cd into the folder
-  - create a `.env` file in the root directory and create two variables one called BOT_TOKEN and one called CLIENT_ID
+  - rename the `.env-template` or copy the file and rename it to `.env` in the root directory and edit or create two variables one called `BOT_TOKEN` and one called `CLIENT_ID`
         - paste your bot token into `BOT_TOKEN` and grab your application id on the general information tab of discord developer portal. Paste that id into `CLIENT_ID`
   - `npm install`
   - `node syncdb.js` will create the SQLite database that is locally stored.
