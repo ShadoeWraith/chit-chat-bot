@@ -17,10 +17,10 @@ export async function execute(interaction) {
     const record = await Guild.findByPk(interaction.guildId);
 
     if (!record.data) {
-        updatedData.channel = { id: channel.id, name: channel.name, message: message, roleId: role ? role.id : '' };
+        updatedData.channel = { id: channel.id, message: message, roleId: role ? role.id : '' };
     } else {
         updatedData = record.data;
-        updatedData.channel = { id: channel.id, name: channel.name, message: message, roleId: role ? role.id : '' };
+        updatedData.channel = { id: channel.id, message: message, roleId: role ? role.id : '' };
     }
 
     const embed = new EmbedBuilder()
