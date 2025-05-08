@@ -16,6 +16,8 @@ export async function execute(interaction) {
         { name: '/role-add', description: 'Adds a role for role assign.' },
         { name: '/role-remove', description: 'Removes a role from role assign.' },
         { name: '/welcome-channel', description: 'Setup a welcome channel for the bot.' },
+        { name: '/welcome-display', description: 'Displays the welcome channel that was set.' },
+        { name: '/welcome-remove', description: 'Removes the welcome channel that was set.' },
     ];
 
     let publicList = [];
