@@ -11,7 +11,7 @@ A bot specifically build for personal friend's server.
 * Uptime/help commands
 
 ## How to use
-* Go to /[https://discord.com/developers/applications](Discord Developer Portal)
+* Go to /[Discord Developer Portal](https://discord.com/developers/applications)
 * Create an application
 * Go to OAuth2 tab
   - Scroll down to Oauth2 URL Generator and tick `bot` and `application.commands`.
