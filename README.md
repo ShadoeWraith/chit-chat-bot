@@ -1,6 +1,8 @@
 # Chit Chat Bot
 A bot specifically build for personal friend's server.
 
+And yes it's just JS. I was bored and built this in a day and just kept adding stuff over time and didn't care to use TS or Python.
+
 ## Functionality
 * Minor mod automation
   - Can assign forbidden words (etc. slurs or profanity) in which the bot will time out the user that says the word
