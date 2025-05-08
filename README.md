@@ -1,5 +1,5 @@
 # Chit Chat Bot
-A bot specifically build for personal friend's server.
+A bot specifically built for a friend's server.
 
 And yes it's just JS. I was bored and built this in a day and just kept adding stuff over time and didn't care to use TS or Python.
 
