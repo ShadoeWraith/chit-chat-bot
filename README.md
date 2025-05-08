@@ -39,7 +39,7 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
 * Pull the code
   - cd into the folder
   - rename the `.env-template` or copy the file and rename it to `.env` in the root directory and edit or create two variables one called `BOT_TOKEN` and one called `CLIENT_ID`
-        - paste your bot token into `BOT_TOKEN` and grab your application id on the general information tab of discord developer portal. Paste that id into `CLIENT_ID`
+  - paste your bot token into `BOT_TOKEN` and grab your application id on the general information tab of discord developer portal. Paste that id into `CLIENT_ID`
   - `npm install`
   - `node syncdb.js` will create the SQLite database that is locally stored.
   - `node deply-commands.js` will grab the commands and make them useable. (if you ever add more commands be sure to run this)
