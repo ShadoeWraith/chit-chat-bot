@@ -81,8 +81,6 @@ export async function execute(interaction) {
 }
 
 const setEmbed = (embed, channelId, roleId, message) => {
-    console.log(roleId);
-
     embed
         .setTitle('Welcome Channel Information')
         .setDescription('Displays the welcome channel, role, and message you chose for this server.')
