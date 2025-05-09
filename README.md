@@ -1,5 +1,5 @@
 # Chit Chat Bot
-A bot specifically built for a friend's server.
+A bot specifically built for a friend's server. Running on a Raspberry Pi.
 
 And yes it's just JS. I was bored and built this in a day and just kept adding stuff over time and didn't care to use TS or Python.
 
@@ -47,4 +47,7 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
   - `node deply-commands.js` will grab the commands and make them useable. (if you ever add more commands be sure to run this)
   - `npm run dev` or `npm start` or `node .` to run the bot
 * Enjoy! :)
+
+* Extra Notes
+  - Recommended to run locally on a Raspberry Pi or your computer.
 
