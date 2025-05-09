@@ -36,10 +36,7 @@ export async function execute(interaction) {
                 });
             }
 
-            embed
-                .setTitle('Server Rules')
-                .setDescription('Rules for the server that must be followed.')
-                .addFields({ name: 'Rules', value: rules.join('\n\n') });
+            setEmbed(embed, rules);
 
             interaction.reply({ embeds: [embed] });
             break;
@@ -57,16 +54,9 @@ export async function execute(interaction) {
                 rules.push(`**${index + 1}.** ${rule}`);
             });
 
-            embed
-                .setTitle('Server Rules')
-                .setDescription('Rules for the server that must be followed.')
-                .addFields({ name: 'Rules', value: rules.join('\n\n') });
+            setEmbed(embed, rules);
 
-            await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } })
-                .then(() => {
-                    interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
-                })
-                .catch((e) => console.log(e));
+            updateGuild(updatedData, interaction, null, embed);
 
             break;
         }
@@ -77,49 +67,52 @@ export async function execute(interaction) {
             let removeRule = true;
             let newData = [];
 
-            console.log(number);
+            if (record.data.rules) {
+                if (record.data.rules.length < number - 1 || number <= 0) removeRule = false;
 
-            try {
-                if (record.data.rules) {
-                    if (record.data.rules.length < number - 1) removeRule = false;
+                record.data.rules.map((rule) => {
+                    newData.push(rule);
+                });
 
-                    record.data.rules.map((rule) => {
-                        newData.push(rule);
-                    });
+                newData = newData.filter((rule, index) => {
+                    return index !== number - 1;
+                });
+            }
 
-                    newData = newData.filter((rule, index) => {
-                        return index !== number - 1;
-                    });
+            if (removeRule) {
+                let updatedData = record.data;
 
-                    console.log(newData);
-                }
+                if (updatedData.rules === undefined) updatedData = { ...updatedData, rules: [...newData] };
+                else updatedData.rules = newData;
 
-                if (removeRule) {
-                    let updatedData = record.data;
-
-                    if (updatedData.rules === undefined) updatedData = { ...updatedData, rules: [...newData] };
-                    else updatedData.rules = newData;
-
-                    await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(() => {
-                        interaction.reply({ content: `has been removed from the dictionary.`, flags: MessageFlags.Ephemeral });
-                    });
-                } else {
-                    interaction.reply({ content: `does not exist in the dictionary.`, flags: MessageFlags.Ephemeral });
-                }
-            } catch (error) {
-                console.log(error);
-                interaction.reply({ content: 'No words in the dictionary to remove.', flags: MessageFlags.Ephemeral });
+                updateGuild(updatedData, interaction, 'the rule has been removed.', null);
+            } else {
+                interaction.reply({ content: 'No rule with that number exists.', flags: MessageFlags.Ephemeral });
             }
             break;
         }
     }
 }
 
-const updateGuild = async (data, interaction, embed) => {
+const setEmbed = (embed, rules) => {
+    embed
+        .setTitle('Server Rules')
+        .setDescription('Rules for the server that must be followed.')
+        .addFields({ name: 'Rules', value: rules.join('\n\n') });
+};
+
+const updateGuild = async (data, interaction, content, embed) => {
     await Guild.update({ data: data }, { where: { guildId: interaction.guildId } }).then(async () => {
-        interaction.reply({
-            embeds: [embed],
-            flags: MessageFlags.Ephemeral,
-        });
+        if (content !== null) {
+            interaction.reply({
+                content: content,
+                flags: MessageFlags.Ephemeral,
+            });
+        } else {
+            interaction.reply({
+                embeds: [embed],
+                flags: MessageFlags.Ephemeral,
+            });
+        }
     });
 };
