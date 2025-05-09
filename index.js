@@ -94,7 +94,17 @@ client.on('interactionCreate', (interaction) => {
 
 // Times users out if they use prohibbited words
 client.on(Events.MessageCreate, (message) => {
-    if (message.author.bot || message.content.startsWith('/dict') || message.content.startsWith('/uptime')) return;
+    if (
+        message.author.bot ||
+        message.content.startsWith('/dict') ||
+        message.content.startsWith('/help') ||
+        message.content.startsWith('/info') ||
+        message.content.startsWith('/role') ||
+        message.content.startsWith('/rules') ||
+        message.content.startsWith('/uptime') ||
+        message.content.startsWith('/welcome')
+    )
+        return;
     let currentData = [];
 
     Guild.findByPk(message.guildId)
