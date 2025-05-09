@@ -14,6 +14,11 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
 * Ability to add a server rules (visual only, the bot will not moderate based on it).
 * Uptime and help commands
 
+## Planned Functionality
+* AI Discord RPG (probably too ambitious)
+* Meme generator
+* better moderation
+
 ## How to use
 * Go to [Discord Developer Portal](https://discord.com/developers/applications)
 * Create an application
