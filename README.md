@@ -11,7 +11,7 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
 * Role assigning
   - Can add/remove roles from a role assign command, where all users can execute /role-assign and pick a role they want.
 * Ability to add a server rules (visual only, the bot will not moderate based on it).
-* Uptime/help commands
+* Uptime and help commands
 
 ## How to use
 * Go to [Discord Developer Portal](https://discord.com/developers/applications)
