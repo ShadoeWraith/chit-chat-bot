@@ -11,13 +11,13 @@ export async function execute(interaction) {
     ];
     let adminCommands = [
         { name: '/dict', description: 'Displays dictionary of prohibited words.' },
-        { name: '/dict-add', description: 'Adds a word to the dictionary.' },
-        { name: '/dict-remove', description: 'Removes a word from the dictionary.' },
-        { name: '/role-add', description: 'Adds a role for role assign.' },
-        { name: '/role-remove', description: 'Removes a role from role assign.' },
-        { name: '/welcome-channel', description: 'Setup a welcome channel for the bot.' },
-        { name: '/welcome-display', description: 'Displays the welcome channel that was set.' },
-        { name: '/welcome-remove', description: 'Removes the welcome channel that was set.' },
+        { name: '/dict add', description: 'Adds a word to the dictionary.' },
+        { name: '/dict remove', description: 'Removes a word from the dictionary.' },
+        { name: '/role add', description: 'Adds a role for role assign.' },
+        { name: '/role remove', description: 'Removes a role from role assign.' },
+        { name: '/welcome setup', description: 'Setup a welcome channel for the bot.' },
+        { name: '/welcome display', description: 'Displays the welcome channel that was set.' },
+        { name: '/welcome remove', description: 'Removes the welcome channel that was set.' },
     ];
 
     let publicList = [];

@@ -1,7 +1,11 @@
-import { SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags, StringSelectMenuOptionBuilder, StringSelectMenuBuilder, ActionRowBuilder, EmbedBuilder } from 'discord.js';
 import { Guild } from '../models/Guild.js';
 
-export const data = new SlashCommandBuilder().setName('role-assign').setDescription('Displays the assign role menu.');
+export const data = new SlashCommandBuilder()
+    .setName('roles')
+    .setDescription('Adds a role to the list for auto assign roles.')
+    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
+    .addSubcommand((subcommand) => subcommand.setName('assign').setDescription('Displays the assign role menu.'));
 
 export async function execute(interaction) {
     const record = await Guild.findByPk(interaction.guildId);
