@@ -6,7 +6,7 @@ export async function execute(interaction) {
     let publicCommands = [
         { name: '/help', description: 'Displays a list of commands.' },
         { name: '/uptime', description: 'Displays the uptime since the bot came online.' },
-        { name: '/role-assign', description: 'Displays a role assign selection.' },
+        { name: '/roles assign', description: 'Displays a role assign selection.' },
         { name: '/info', description: 'Displays info about a selected user.' },
     ];
     let adminCommands = [
