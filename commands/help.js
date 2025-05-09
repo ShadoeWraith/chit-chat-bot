@@ -15,6 +15,9 @@ export async function execute(interaction) {
         { name: '/dict remove', description: 'Removes a word from the dictionary.' },
         { name: '/role add', description: 'Adds a role for role assign.' },
         { name: '/role remove', description: 'Removes a role from role assign.' },
+        { name: '/rules display', description: 'Displays the rules of the server to everyone.' },
+        { name: '/rules add', description: 'Adds a rule to the rule list.' },
+        { name: '/rules remove', description: 'Removes a rule from the rule list.' },
         { name: '/welcome setup', description: 'Setup a welcome channel for the bot.' },
         { name: '/welcome display', description: 'Displays the welcome channel that was set.' },
         { name: '/welcome remove', description: 'Removes the welcome channel that was set.' },
@@ -30,9 +33,8 @@ export async function execute(interaction) {
     adminCommands.map((command) => {
         adminList.push(`**${command.name}** - ${command.description}`);
     });
-
     const embed = new EmbedBuilder()
-        .setColor(0x00aa00)
+        .setColor(0x0099ff)
         .setTitle('Bot Commands')
         .setDescription('Commands available for public and admins')
         .addFields(

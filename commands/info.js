@@ -21,7 +21,7 @@ export async function execute(interaction) {
     const joinedAt = format(member.joinedAt, 'MM/dd/yyyy');
 
     const embed = new EmbedBuilder()
-        .setColor(0x00aaaaa)
+        .setColor(0x0099ff)
         .setTitle(`${member.user.globalName ? member.user.globalName : member.user.username}'s Information`)
         .setThumbnail(member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }))
         .setDescription('Displaying pointless information just because I was bored and wanted to keep working on the bot.')
