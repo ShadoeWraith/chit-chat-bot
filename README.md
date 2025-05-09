@@ -5,12 +5,14 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
 
 ## Functionality
 * Minor mod automation
-  - Can assign forbidden words (etc. slurs or profanity) in which the bot will time out the user that says the word
+  - Can assign forbidden words (etc. slurs or profanity) in which the bot will time out the user that says the word.
+  - The moderation does not work on any admins of the server, but it will still delete the message that contained the word/phrase.
 * Automaic role assigning on joining
   - Can set a welcome channel, welcome message, and a member role to assign on joining the server.
 * Role assigning
   - Can add/remove roles from a role assign command, where all users can execute /role-assign and pick a role they want.
-* Uptime/help commands
+* Ability to add a server rules (visual only, the bot will not moderate based on it).
+* Uptime and help commands
 
 ## How to use
 * Go to [Discord Developer Portal](https://discord.com/developers/applications)
