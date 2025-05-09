@@ -5,7 +5,12 @@ export const data = new SlashCommandBuilder()
     .setName('rules')
     .setDescription('Adds a role to the list for auto assign roles.')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-    .addSubcommand((subcommand) => subcommand.setName('display').setDescription('Displays the rules you set for the server.'))
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('display')
+            .setDescription('Displays the rules you set for the server.')
+            .addBooleanOption((option) => option.setName('ephemeral').setDescription('Displays only to you.').setRequired(false))
+    )
     .addSubcommand((subcommand) =>
         subcommand
             .setName('add')
@@ -28,6 +33,7 @@ export async function execute(interaction) {
     switch (subcommand) {
         case 'display': {
             let rules = [];
+            let ephemeral = interaction.options.getBoolean('ephemeral');
 
             let values = record.data?.rules;
             if (values !== null && values !== undefined) {
@@ -38,7 +44,7 @@ export async function execute(interaction) {
 
             setEmbed(embed, rules);
 
-            interaction.reply({ embeds: [embed] });
+            interaction.reply({ embeds: [embed], flags: ephemeral ? MessageFlags.Ephemeral : '' });
             break;
         }
         case 'add': {
