@@ -1,11 +1,11 @@
 # Chit Chat Bot
-A bot specifically built for a friend's server.
+A bot specifically built for a friend's server. Running on a Raspberry Pi.
 
 And yes it's just JS. I was bored and built this in a day and just kept adding stuff over time and didn't care to use TS or Python.
 
 ## Functionality
 * Minor mod automation
-  - Can assign forbidden words (etc. slurs or profanity) in which the bot will time out the user that says the word.
+  - Can assign forbidden words (i.e. slurs or profanity) in which the bot will time out the user that says the word.
   - The moderation does not work on any admins of the server, but it will still delete the message that contained the word/phrase.
 * Automaic role assigning on joining
   - Can set a welcome channel, welcome message, and a member role to assign on joining the server.
@@ -13,6 +13,11 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
   - Can add/remove roles from a role assign command, where all users can execute /role-assign and pick a role they want.
 * Ability to add a server rules (visual only, the bot will not moderate based on it).
 * Uptime and help commands
+
+## Planned Functionality
+* AI Discord RPG (probably too ambitious)
+* Meme generator
+* better moderation
 
 ## How to use
 * Go to [Discord Developer Portal](https://discord.com/developers/applications)
@@ -47,4 +52,7 @@ And yes it's just JS. I was bored and built this in a day and just kept adding s
   - `node deply-commands.js` will grab the commands and make them useable. (if you ever add more commands be sure to run this)
   - `npm run dev` or `npm start` or `node .` to run the bot
 * Enjoy! :)
+
+* Extra Notes
+  - Recommended to run locally on a Raspberry Pi or your computer.
 
