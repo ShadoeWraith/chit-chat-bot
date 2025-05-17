@@ -8,6 +8,7 @@ export const data = new SlashCommandBuilder()
     .addSubcommand((subcommand) => subcommand.setName('setup').setDescription('Setup the category you want the temporary voice channels to occupy.'));
 
 export async function execute(interaction) {
+    console.log(`${interaction.user.displayName} (${interaction.user.username}) - used category setup`);
     const categories = [];
     const categoryNames = [];
     const categoryOptions = [];

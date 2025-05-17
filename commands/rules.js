@@ -32,6 +32,7 @@ export async function execute(interaction) {
 
     switch (subcommand) {
         case 'display': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used rules display`);
             let rules = [];
             let ephemeral = interaction.options.getBoolean('ephemeral');
 
@@ -48,6 +49,7 @@ export async function execute(interaction) {
             break;
         }
         case 'add': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used rules add`);
             let input = interaction.options.getString('rule');
 
             let updatedData = record.data;
@@ -68,6 +70,7 @@ export async function execute(interaction) {
         }
 
         case 'remove': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used rules remove`);
             let number = interaction.options.getNumber('number');
 
             let removeRule = true;

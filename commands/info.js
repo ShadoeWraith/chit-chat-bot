@@ -12,6 +12,8 @@ export async function execute(interaction) {
     const guild = interaction.guild;
     const member = await guild.members.fetch(targetUser.id);
 
+    console.log(`${interaction.user.displayName} (${interaction.user.username}) - used info on ${member.user.globalName} (${member.user.username})`);
+
     const userRoles = [];
     member.roles.cache.map((role) => {
         if (role.name !== '@everyone') userRoles.push(`<@&${role.id}>`);

@@ -30,6 +30,7 @@ export async function execute(interaction) {
 
     switch (subcommand) {
         case 'display': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used dict display`);
             let prohibitedWords = [];
 
             let values = record.data?.forbiddenWords;
@@ -49,6 +50,7 @@ export async function execute(interaction) {
         }
 
         case 'add': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used dict add for ${input}`);
             let addWord = true;
 
             if (record.data?.forbiddenWords) {
@@ -75,6 +77,7 @@ export async function execute(interaction) {
         }
 
         case 'remove': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used dict remove on ${input}`);
             let removeWord = true;
             let newData = [];
 

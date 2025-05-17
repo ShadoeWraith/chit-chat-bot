@@ -26,6 +26,8 @@ export async function execute(interaction) {
 
     switch (subcommand) {
         case 'add': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used role add`);
+
             let addRole = true;
 
             if (record.data.roles) {
@@ -50,6 +52,7 @@ export async function execute(interaction) {
         }
 
         case 'remove': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used role remove`);
             let removeRole = true;
             let newData = [];
 

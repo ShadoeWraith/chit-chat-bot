@@ -5,6 +5,7 @@ import { Bot } from '../models/Bot.js';
 export const data = new SlashCommandBuilder().setName('uptime').setDescription('Displays the uptime of the bot.');
 
 export async function execute(interaction) {
+    console.log(`${interaction.user.displayName} (${interaction.user.username}) - used uptime`);
     let currentDate = new Date();
     Bot.findByPk(interaction.client.user.id)
         .then(async (data) => {

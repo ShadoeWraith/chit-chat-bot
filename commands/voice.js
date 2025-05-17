@@ -25,6 +25,7 @@ export async function execute(interaction) {
 
     switch (subcommand) {
         case 'create': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used voice create with the name ${input}`);
             let channel = {};
             let newData = [];
             let createChannel = true;
@@ -86,6 +87,7 @@ export async function execute(interaction) {
         }
 
         case 'delete': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used voice remove on ${input}`);
             let newData = [];
             let removeChannel = false;
 

@@ -25,6 +25,7 @@ export async function execute(interaction) {
 
     switch (subcommand) {
         case 'display': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used welcome display`);
             let currentChannel = {};
 
             if (!record.data || Object.keys(record.data.channel).length === 0) {
@@ -47,6 +48,7 @@ export async function execute(interaction) {
         }
 
         case 'setup': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used welcome setup`);
             let channel = interaction.options.getChannel('channel');
             let message = interaction.options.getString('message');
             let role = interaction.options.getRole('role');
@@ -66,6 +68,7 @@ export async function execute(interaction) {
         }
 
         case 'remove': {
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used welcome remove`);
             if (!record.data) {
                 updatedData.channel = {};
             } else {

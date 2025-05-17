@@ -8,6 +8,7 @@ export const data = new SlashCommandBuilder()
     .addSubcommand((subcommand) => subcommand.setName('assign').setDescription('Displays the assign role menu.'));
 
 export async function execute(interaction) {
+    console.log(`${interaction.user.displayName} (${interaction.user.username}) - used roles assign`);
     const record = await Guild.findByPk(interaction.guildId);
 
     const roleOptions = [];

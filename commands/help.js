@@ -3,6 +3,8 @@ import { SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
 export const data = new SlashCommandBuilder().setName('help').setDescription('Displays a list of commands.');
 
 export async function execute(interaction) {
+    console.log(`${interaction.user.displayName} (${interaction.user.username}) - used help`);
+
     let publicCommands = [
         { name: '/help', description: 'Displays a list of commands.' },
         { name: '/uptime', description: 'Displays the uptime since the bot came online.' },
