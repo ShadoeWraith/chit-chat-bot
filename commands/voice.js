@@ -10,16 +10,11 @@ export const data = new SlashCommandBuilder()
             .setDescription('Create a temporary voice channel.')
             .addStringOption((option) => option.setName('name').setDescription('Temporary voice channel name.').setRequired(true))
     )
-    .addSubcommand((subcommand) =>
-        subcommand
-            .setName('delete')
-            .setDescription('Deletes a temporary voice channel.')
-            .addStringOption((option) => option.setName('name').setDescription('Remove the word from the dictionary.').setRequired(true))
-    );
+    .addSubcommand((subcommand) => subcommand.setName('delete').setDescription('Deletes your voice channel.'));
 
 export async function execute(interaction) {
     const subcommand = interaction.options.getSubcommand(false);
-    let input = interaction.options.getString('name').toLowerCase();
+    let input = interaction.options.getString('name');
     const record = await Guild.findByPk(interaction.guildId);
     let updatedData = record.data;
 
@@ -87,9 +82,8 @@ export async function execute(interaction) {
         }
 
         case 'delete': {
-            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used voice remove on ${input}`);
+            console.log(`${interaction.user.displayName} (${interaction.user.username}) - used voice remove`);
             let newData = [];
-            let removeChannel = false;
 
             try {
                 if (record.data?.voiceChannels) {
@@ -98,27 +92,28 @@ export async function execute(interaction) {
                     });
                 }
 
-                const channel = interaction.guild.channels.cache.find((c) => c.name === input);
+                updatedData = record.data;
+                let oldChannel = {};
+
+                if (record.data?.voiceChannels) {
+                    updatedData.voiceChannels.filter(async (channel) => {
+                        if (channel.ownerId === interaction.user.id) {
+                            oldChannel = interaction.guild.channels.cache.get(channel.id);
+                        }
+                    });
+                }
 
                 newData = newData.filter((c) => {
-                    if (c.ownerId === interaction.user.id) removeChannel = true;
-                    if (interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) removeChannel = true;
-                    return c.id !== channel.id;
+                    return c.ownerId !== interaction.user.id;
                 });
 
-                updatedData = record.data;
+                if (updatedData.voiceChannels === undefined) updatedData = { ...updatedData, voiceChannels: [...newData] };
+                else updatedData.voiceChannels = newData;
 
-                if (removeChannel) {
-                    if (updatedData.voiceChannels === undefined) updatedData = { ...updatedData, voiceChannels: [...newData] };
-                    else updatedData.voiceChannels = newData;
-
-                    await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(() => {
-                        channel.delete();
-                        interaction.reply({ content: `**${input}** has been deleted.`, flags: MessageFlags.Ephemeral });
-                    });
-                } else {
-                    interaction.reply({ content: `**${input}** does not exist to delete, or you are not the owner of the selected channel.`, flags: MessageFlags.Ephemeral });
-                }
+                await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(() => {
+                    oldChannel.delete();
+                    interaction.reply({ content: `Your voice channel has been deleted.`, flags: MessageFlags.Ephemeral });
+                });
             } catch (error) {
                 interaction.reply({ content: 'Unable to delete channel.', flags: MessageFlags.Ephemeral });
             }
