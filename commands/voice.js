@@ -101,7 +101,6 @@ export async function execute(interaction) {
                 newData = newData.filter((c) => {
                     if (c.ownerId === interaction.user.id) removeChannel = true;
                     if (interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) removeChannel = true;
-                    console.log(c);
                     return c.id !== channel.id;
                 });
 
