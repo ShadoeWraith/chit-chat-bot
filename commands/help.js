@@ -8,6 +8,8 @@ export async function execute(interaction) {
         { name: '/uptime', description: 'Displays the uptime since the bot came online.' },
         { name: '/roles assign', description: 'Displays a role assign selection.' },
         { name: '/info', description: 'Displays info about a selected user.' },
+        { name: '/voice create', description: 'Creates a temporary voice channel.' },
+        { name: '/voice delete', description: 'Deletes a temporary voice channel.' },
     ];
     let adminCommands = [
         { name: '/dict', description: 'Displays dictionary of prohibited words.' },
@@ -21,6 +23,7 @@ export async function execute(interaction) {
         { name: '/welcome setup', description: 'Setup a welcome channel for the bot.' },
         { name: '/welcome display', description: 'Displays the welcome channel that was set.' },
         { name: '/welcome remove', description: 'Removes the welcome channel that was set.' },
+        { name: '/category setup', description: 'Sets a category for temporary voice channels.' },
     ];
 
     let publicList = [];

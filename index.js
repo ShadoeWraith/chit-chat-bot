@@ -64,16 +64,34 @@ client.on('guildCreate', (guild) => {
 client.on('interactionCreate', (interaction) => {
     Guild.findOrCreate({ where: { guildId: interaction.guildId } }).then(async () => {
         if (interaction.isAnySelectMenu()) {
-            try {
-                if (interaction.member.roles.cache.has(interaction.values[0])) {
-                    interaction.member.roles.remove(interaction.values[0]);
-                    interaction.reply({ content: `<@&${interaction.values[0]}> has been removed from your user.`, flags: MessageFlags.Ephemeral });
-                } else {
-                    interaction.member.roles.add(interaction.values[0]);
-                    interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
+            if (interaction.customId === 'roleSelectMenu') {
+                try {
+                    if (interaction.member.roles.cache.has(interaction.values[0])) {
+                        interaction.member.roles.remove(interaction.values[0]);
+                        interaction.reply({ content: `<@&${interaction.values[0]}> has been removed from your user.`, flags: MessageFlags.Ephemeral });
+                    } else {
+                        interaction.member.roles.add(interaction.values[0]);
+                        interaction.reply({ content: `<@&${interaction.values[0]}> has been added to your user.`, flags: MessageFlags.Ephemeral });
+                    }
+                } catch (error) {
+                    interaction.reply({ content: "Unable to change anyone's color with admin privileges.", flags: MessageFlags.Ephemeral });
                 }
-            } catch (error) {
-                interaction.reply({ content: "Unable to change anyone's color with admin privileges.", flags: MessageFlags.Ephemeral });
+            }
+
+            if (interaction.customId === 'categorySelectionMenu') {
+                let updatedData = {};
+                const record = await Guild.findByPk(interaction.guildId);
+
+                if (!record.data) {
+                    updatedData.tempVoiceId = interaction.values[0];
+                } else {
+                    updatedData = record.data;
+                    updatedData.tempVoiceId = interaction.values[0];
+                }
+
+                await Guild.update({ data: updatedData }, { where: { guildId: interaction.guildId } }).then(async () => {
+                    await interaction.reply({ content: `**<#${interaction.values[0]}>** has been assigned for temporary voice channels.`, flags: MessageFlags.Ephemeral });
+                });
             }
         }
 
@@ -155,6 +173,37 @@ client.on('guildMemberAdd', async (member) => {
         }
     } catch (error) {
         console.log('Welcome channel not setup');
+    }
+});
+
+client.on('voiceStateUpdate', (oldState, newState) => {
+    const channel = oldState.channel || newState.channel; // Get the channel from either old or new state
+    if (!channel) return;
+
+    const isTargetChannel = channel.id === 'YOUR_CHANNEL_ID'; // Replace with your channel ID
+
+    if (isTargetChannel && oldState.channel.members.size === 0 && oldState.channel.id === newState.channel.id) {
+        console.log('Empty voice channel detected:', channel.name);
+
+        // Set a timeout to delete the channel
+        const timeoutID = setTimeout(async () => {
+            if (oldState.channel.members.size === 0 && oldState.channel.id === newState.channel.id) {
+                try {
+                    await channel.delete();
+                    console.log('Deleted voice channel:', channel.name);
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                }
+            }
+        }, 30000); // Delete after 30 seconds
+
+        // Reset the timeout if the channel becomes populated before it expires
+        client.on('voiceStateUpdate', (oldState2, newState2) => {
+            if (newState2.channel.id === channel.id && newState2.channel.members.size > 0) {
+                clearTimeout(timeoutID);
+                console.log('Voice channel is populated, clearing timeout:', channel.name);
+            }
+        });
     }
 });
 
