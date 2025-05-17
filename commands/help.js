@@ -11,7 +11,7 @@ export async function execute(interaction) {
         { name: '/roles assign', description: 'Displays a role assign selection.' },
         { name: '/info', description: 'Displays info about a selected user.' },
         { name: '/voice create', description: 'Creates a temporary voice channel.' },
-        { name: '/voice delete', description: 'Deletes a temporary voice channel.' },
+        { name: '/voice delete', description: 'Deletes your currently owned temporary voice channel.' },
     ];
     let adminCommands = [
         { name: '/dict', description: 'Displays dictionary of prohibited words.' },
